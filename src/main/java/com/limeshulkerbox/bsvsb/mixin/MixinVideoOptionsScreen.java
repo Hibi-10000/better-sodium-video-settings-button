@@ -1,8 +1,8 @@
 package com.limeshulkerbox.bsvsb.mixin;
 
 import com.github.hibi_10000.mods.fabric.bsvsb.LoggerUtil;
-import me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI;
-import net.fabricmc.loader.api.FabricLoader;
+import com.github.hibi_10000.mods.fabric.bsvsb.ReesesUtil;
+import com.github.hibi_10000.mods.fabric.bsvsb.SodiumUtil;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.screen.option.VideoOptionsScreen;
@@ -12,7 +12,6 @@ import net.minecraft.client.option.SimpleOption;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -20,17 +19,8 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.util.List;
-
 @Mixin(VideoOptionsScreen.class)
 public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
-    @Unique
-    Constructor<?> SodiumVideoOptionsScreenClassCtor;
-    @Unique
-    Field SodiumOptionsGUIClassPagesField;
-
     public MixinVideoOptionsScreen(Screen parent, GameOptions gameOptions, Text title) {
         super(parent, gameOptions, title);
     }
@@ -45,54 +35,17 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
     @Inject(method = "init", at = @At("HEAD"))
     void mixinInit(CallbackInfo callbackInfo) {
         this.addDrawableChild(new ButtonWidget.Builder(Text.translatable("text.bettersodiumvideosettings.sodiumvideosettings"), (button) -> {
-            if (FabricLoader.getInstance().isModLoaded("reeses-sodium-options")) {
-                flashyReesesOptionsScreen();
-            } else {
-                sodiumVideoOptionsScreen();
-            }
-        }).dimensions(this.width / 2 + 5, this.height - 27, 150, 20).build());
-    }
-
-    @Unique
-    void flashyReesesOptionsScreen() {
-        if (SodiumVideoOptionsScreenClassCtor == null) {
             try {
-                SodiumVideoOptionsScreenClassCtor = Class.forName("me.flashyreese.mods.reeses_sodium_options.client.gui.SodiumVideoOptionsScreen").getConstructor(Screen.class, List.class);
+                assert this.client != null;
+                Screen newScreen = ReesesUtil.isReesesLoaded()
+                    ? ReesesUtil.getReesesScreen(this)
+                    : SodiumUtil.getSodiumScreen(this);
+                assert newScreen != null;
+                this.client.setScreen(newScreen);
             } catch (Exception e) {
                 LoggerUtil.throwError(e);
             }
-        }
-        try {
-            assert this.client != null;
-            ensureSodiumOptionsGUI();
-            SodiumOptionsGUI tmpScreen = new SodiumOptionsGUI(this);
-            var pages = SodiumOptionsGUIClassPagesField.get(tmpScreen);
-            this.client.setScreen((Screen) SodiumVideoOptionsScreenClassCtor.newInstance(this, pages));
-        } catch (Exception e) {
-            LoggerUtil.throwError(e);
-        }
-    }
-
-    @Unique
-    void ensureSodiumOptionsGUI()
-    {
-        try {
-            SodiumOptionsGUIClassPagesField = SodiumOptionsGUI.class.getDeclaredField("pages");
-            SodiumOptionsGUIClassPagesField.setAccessible(true);
-        } catch (Exception e) {
-            LoggerUtil.throwError(e);
-        }
-    }
-
-    @Unique
-    void sodiumVideoOptionsScreen() {
-        ensureSodiumOptionsGUI();
-        try {
-            assert this.client != null;
-            this.client.setScreen(new SodiumOptionsGUI(this));
-        } catch (Exception e) {
-            LoggerUtil.throwError(e);
-        }
+        }).dimensions(this.width / 2 + 5, this.height - 27, 150, 20).build());
     }
 
     @ModifyConstant(method = "init", constant = @Constant(intValue = 100, ordinal = 0))
