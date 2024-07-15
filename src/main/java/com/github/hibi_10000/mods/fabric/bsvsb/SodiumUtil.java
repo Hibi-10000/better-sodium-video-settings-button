@@ -11,7 +11,9 @@ public class SodiumUtil {
 
     public static SodiumOptionsGUI getSodiumScreen(Screen screen) {
         try {
-            return new SodiumOptionsGUI(screen);
+            var constructor = SodiumOptionsGUI.class.getDeclaredConstructor(Screen.class);
+            constructor.setAccessible(true);
+            return constructor.newInstance(screen);
         } catch (Exception e) {
             LoggerUtil.throwError(e);
         }
