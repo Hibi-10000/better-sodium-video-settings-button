@@ -1,5 +1,6 @@
 package com.limeshulkerbox.bsvsb.mixin;
 
+import com.github.hibi_10000.mods.fabric.bsvsb.LoggerUtil;
 import me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
@@ -10,8 +11,6 @@ import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,8 +26,6 @@ import java.util.List;
 
 @Mixin(VideoOptionsScreen.class)
 public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
-    @Unique
-    private final Logger logger = LoggerFactory.getLogger("bsvsb");
     @Unique
     Constructor<?> SodiumVideoOptionsScreenClassCtor;
     @Unique
@@ -62,7 +59,7 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
             try {
                 SodiumVideoOptionsScreenClassCtor = Class.forName("me.flashyreese.mods.reeses_sodium_options.client.gui.SodiumVideoOptionsScreen").getConstructor(Screen.class, List.class);
             } catch (Exception e) {
-                logger.error("exception from bsvsb", e);
+                LoggerUtil.throwError(e);
             }
         }
         try {
@@ -72,7 +69,7 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
             var pages = SodiumOptionsGUIClassPagesField.get(tmpScreen);
             this.client.setScreen((Screen) SodiumVideoOptionsScreenClassCtor.newInstance(this, pages));
         } catch (Exception e) {
-            logger.error("exception from bsvsb", e);
+            LoggerUtil.throwError(e);
         }
     }
 
@@ -83,7 +80,7 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
             SodiumOptionsGUIClassPagesField = SodiumOptionsGUI.class.getDeclaredField("pages");
             SodiumOptionsGUIClassPagesField.setAccessible(true);
         } catch (Exception e) {
-            logger.error("exception from bsvsb", e);
+            LoggerUtil.throwError(e);
         }
     }
 
@@ -94,7 +91,7 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
             assert this.client != null;
             this.client.setScreen(new SodiumOptionsGUI(this));
         } catch (Exception e) {
-            logger.error("exception from bsvsb", e);
+            LoggerUtil.throwError(e);
         }
     }
 
