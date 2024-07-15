@@ -9,8 +9,16 @@
         "Hibi_10000"
     ],
     "contact": {
-        "homepage": "https://www.curseforge.com/minecraft/mc-mods/better-sodium-video-settings-button",
-        "sources": "https://github.com/LimeShulkerBox/better-sodium-video-settings"
+        "sources": "https://github.com/Hibi_10000/better-sodium-video-settings-button",
+        "fork_origin": "https://github.com/LimeShulkerBox/better-sodium-video-settings"
+    },
+    "custom": {
+        "modmenu": {
+            "links": {
+                "Fork Origin": "https://github.com/LimeShulkerBox/better-sodium-video-settings"
+            },
+            "update_checker": false
+        }
     },
     "license": "MIT",
     "icon": "assets/bettersodiumbutton/logo.png",
