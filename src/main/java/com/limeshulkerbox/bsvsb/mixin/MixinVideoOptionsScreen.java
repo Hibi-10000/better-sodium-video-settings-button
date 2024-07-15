@@ -1,5 +1,6 @@
 package com.limeshulkerbox.bsvsb.mixin;
 
+import me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
@@ -31,11 +32,7 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
     @Unique
     Constructor<?> SodiumVideoOptionsScreenClassCtor;
     @Unique
-    Constructor<?> SodiumOptionsGUIClassCtor;
-    @Unique
     Field SodiumOptionsGUIClassPagesField;
-    @Unique
-    Class<?> SodiumOptionsGUIClass;
 
     public MixinVideoOptionsScreen(Screen parent, GameOptions gameOptions, Text title) {
         super(parent, gameOptions, title);
@@ -43,7 +40,7 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
 
     @Inject(method = "getOptions", at = @At("RETURN"), cancellable = true)
     private static void removeChunkBuilderButton(GameOptions gameOptions, CallbackInfoReturnable<SimpleOption<?>[]> cir) {
-        var value = cir.getReturnValue();
+        SimpleOption<?>[] value = cir.getReturnValue();
         value = ArrayUtils.removeElement(value, gameOptions.getChunkBuilderMode());
         cir.setReturnValue(value);
     }
@@ -71,7 +68,7 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
         try {
             assert this.client != null;
             ensureSodiumOptionsGUI();
-            var tmpScreen = SodiumOptionsGUIClassCtor.newInstance(this);
+            SodiumOptionsGUI tmpScreen = new SodiumOptionsGUI(this);
             var pages = SodiumOptionsGUIClassPagesField.get(tmpScreen);
             this.client.setScreen((Screen) SodiumVideoOptionsScreenClassCtor.newInstance(this, pages));
         } catch (Exception e) {
@@ -82,15 +79,11 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
     @Unique
     void ensureSodiumOptionsGUI()
     {
-        if (SodiumOptionsGUIClass == null) {
-            try {
-                SodiumOptionsGUIClass = Class.forName("me.jellysquid.mods.sodium.client.gui.SodiumOptionsGUI");
-                SodiumOptionsGUIClassCtor = SodiumOptionsGUIClass.getConstructor(Screen.class);
-                SodiumOptionsGUIClassPagesField = SodiumOptionsGUIClass.getDeclaredField("pages");
-                SodiumOptionsGUIClassPagesField.setAccessible(true);
-            } catch (Exception e) {
-                logger.error("exception from bsvsb", e);
-            }
+        try {
+            SodiumOptionsGUIClassPagesField = SodiumOptionsGUI.class.getDeclaredField("pages");
+            SodiumOptionsGUIClassPagesField.setAccessible(true);
+        } catch (Exception e) {
+            logger.error("exception from bsvsb", e);
         }
     }
 
@@ -99,7 +92,7 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
         ensureSodiumOptionsGUI();
         try {
             assert this.client != null;
-            this.client.setScreen((Screen) SodiumOptionsGUIClassCtor.newInstance(this));
+            this.client.setScreen(new SodiumOptionsGUI(this));
         } catch (Exception e) {
             logger.error("exception from bsvsb", e);
         }

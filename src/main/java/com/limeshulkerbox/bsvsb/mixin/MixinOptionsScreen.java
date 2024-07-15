@@ -22,6 +22,7 @@ public abstract class MixinOptionsScreen extends Screen {
         super(title);
     }
 
+    // in createButton no name method ButtonWidget
     @Inject(method = "method_19828", at = @At("HEAD"), cancellable = true)
     private void disableSodiumSettings(CallbackInfoReturnable<Screen> cir) {
         assert this.client != null;
