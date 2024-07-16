@@ -4,7 +4,7 @@ on: workflow_dispatch
 
 jobs:
   build:
-    if: startsWith(github.ref, 'refs/tags/')
+    if: github.ref_type == 'tag'
     uses: ./.github/workflows/build.yml
 
   release:
