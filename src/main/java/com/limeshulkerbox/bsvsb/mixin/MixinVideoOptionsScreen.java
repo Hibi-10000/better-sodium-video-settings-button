@@ -7,16 +7,15 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.option.GameOptionsScreen;
 import net.minecraft.client.gui.screen.option.VideoOptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.client.option.SimpleOption;
+import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.ModifyConstant;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(VideoOptionsScreen.class)
@@ -32,9 +31,13 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
         cir.setReturnValue(value);
     }
 
-    @Inject(method = "init", at = @At("HEAD"))
-    void mixinInit(CallbackInfo callbackInfo) {
-        this.addDrawableChild(new ButtonWidget.Builder(Text.translatable("text.bettersodiumvideosettings.sodiumvideosettings"), (button) -> {
+    @Override
+    protected void initFooter() {
+        DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(DirectionalLayoutWidget.horizontal().spacing(8));
+        directionalLayoutWidget.add(ButtonWidget.builder(ScreenTexts.DONE, (button) -> {
+            this.close();
+        }).build());
+        directionalLayoutWidget.add(ButtonWidget.builder(Text.translatable("text.bettersodiumvideosettings.sodiumvideosettings"), (button) -> {
             try {
                 assert this.client != null;
                 Screen newScreen = ReesesUtil.isReesesLoaded()
@@ -45,16 +48,6 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
             } catch (Exception e) {
                 LoggerUtil.throwError(e);
             }
-        }).dimensions(this.width / 2 + 5, this.height - 27, 150, 20).build());
-    }
-
-    @ModifyConstant(method = "init", constant = @Constant(intValue = 100, ordinal = 0))
-    private int modifyDonePos(int input) {
-        return 155;
-    }
-
-    @ModifyConstant(method = "init", constant = @Constant(intValue = 200, ordinal = 0))
-    private int modifyDoneWidth(int input) {
-        return 150;
+        }).build());
     }
 }
