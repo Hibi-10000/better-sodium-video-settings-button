@@ -45,12 +45,12 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
             } catch (Exception e) {
                 LoggerUtil.throwError(e);
             }
-        }).dimensions(this.width / 2 + 5, this.height - 27, 150, 20).build());
+        }).dimensions(this.width / 2 - 155, this.height - 27, 150, 20).build());
     }
 
     @ModifyConstant(method = "init", constant = @Constant(intValue = 100, ordinal = 0))
     private int modifyDonePos(int input) {
-        return 155;
+        return -5;
     }
 
     @ModifyConstant(method = "init", constant = @Constant(intValue = 200, ordinal = 0))
