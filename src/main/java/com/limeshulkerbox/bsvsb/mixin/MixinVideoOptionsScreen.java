@@ -34,9 +34,6 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
     @Override
     protected void initFooter() {
         DirectionalLayoutWidget directionalLayoutWidget = this.layout.addFooter(DirectionalLayoutWidget.horizontal().spacing(8));
-        directionalLayoutWidget.add(ButtonWidget.builder(ScreenTexts.DONE, (button) -> {
-            this.close();
-        }).build());
         directionalLayoutWidget.add(ButtonWidget.builder(Text.translatable("text.bettersodiumvideosettings.sodiumvideosettings"), (button) -> {
             try {
                 assert this.client != null;
@@ -48,6 +45,9 @@ public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
             } catch (Exception e) {
                 LoggerUtil.throwError(e);
             }
+        }).build());
+        directionalLayoutWidget.add(ButtonWidget.builder(ScreenTexts.DONE, (button) -> {
+            this.close();
         }).build());
     }
 }
