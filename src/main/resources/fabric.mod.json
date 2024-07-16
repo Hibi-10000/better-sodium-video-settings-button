@@ -9,12 +9,15 @@
         "Hibi_10000"
     ],
     "contact": {
+        "homepage": "https://github.com/Hibi_10000/better-sodium-video-settings-button",
         "sources": "https://github.com/Hibi_10000/better-sodium-video-settings-button",
+        "issues": "https://github.com/Hibi_10000/better-sodium-video-settings-button/issues",
         "fork_origin": "https://github.com/LimeShulkerBox/better-sodium-video-settings"
     },
     "custom": {
         "modmenu": {
             "links": {
+                "modmenu.github_releases": "https://github.com/Hibi_10000/better-sodium-video-settings-button/releases",
                 "Fork Origin": "https://github.com/LimeShulkerBox/better-sodium-video-settings"
             },
             "update_checker": false
