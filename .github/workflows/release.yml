@@ -1,11 +1,6 @@
 name: release
 
-on:
-  push:
-    tags:
-      - '^mc[0-9]+?.[0-9]+?(.[0-9]+?)?-[0-9]+?.[0-9]+?.[0-9]+?$'
-
-  workflow_dispatch:
+on: workflow_dispatch
 
 jobs:
   build:
