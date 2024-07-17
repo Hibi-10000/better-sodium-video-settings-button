@@ -9,29 +9,25 @@ import net.minecraft.client.gui.screen.option.VideoOptionsScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.ClickableWidget;
 import net.minecraft.client.gui.widget.DirectionalLayoutWidget;
-import net.minecraft.client.gui.widget.OptionListWidget;
 import net.minecraft.client.option.GameOptions;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(VideoOptionsScreen.class)
 public abstract class MixinVideoOptionsScreen extends GameOptionsScreen {
-    @Shadow
-    private OptionListWidget list;
-
     public MixinVideoOptionsScreen(Screen parent, GameOptions gameOptions, Text title) {
         super(parent, gameOptions, title);
     }
 
-    @Inject(method = "init", at = @At("TAIL"))
+    @Inject(method = "addOptions", at = @At("TAIL"))
     protected void disableButton(CallbackInfo ci) {
         // https://github.com/CaffeineMC/sodium-fabric/pull/964#issuecomment-966529568
-        ClickableWidget chunkBuilderMode = this.list.getWidgetFor(gameOptions.getChunkBuilderMode());
+        assert this.body != null;
+        ClickableWidget chunkBuilderMode = this.body.getWidgetFor(gameOptions.getChunkBuilderMode());
         if (chunkBuilderMode != null) {
             chunkBuilderMode.active = false;
             chunkBuilderMode.setMessage(
