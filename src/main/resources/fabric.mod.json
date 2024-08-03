@@ -39,6 +39,7 @@
         "java": ">=17"
     },
     "suggests": {
-        "reeses-sodium-options": ">=1.5.1"
+        "reeses-sodium-options": ">=1.5.1",
+        "modmenu": ">=7.0.0"
     }
 }
