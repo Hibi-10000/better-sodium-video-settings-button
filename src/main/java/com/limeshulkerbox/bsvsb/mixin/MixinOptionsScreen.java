@@ -1,10 +1,10 @@
 package com.limeshulkerbox.bsvsb.mixin;
 
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.screen.option.OptionsScreen;
-import net.minecraft.client.gui.screen.option.VideoOptionsScreen;
-import net.minecraft.client.option.GameOptions;
-import net.minecraft.text.Text;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
+import net.minecraft.client.gui.screens.options.VideoSettingsScreen;
+import net.minecraft.network.chat.Component;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,16 +17,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinOptionsScreen extends Screen {
     @Shadow
     @Final
-    private GameOptions settings;
+    private Options options;
 
-    protected MixinOptionsScreen(Text title) {
+    protected MixinOptionsScreen(Component title) {
         super(title);
     }
 
     // in createButton no name method ButtonWidget
     @Inject(method = "method_19828", at = @At("HEAD"), cancellable = true)
     private void disableSodiumSettings(CallbackInfoReturnable<Screen> cir) {
-        assert this.client != null;
-        cir.setReturnValue(new VideoOptionsScreen(this, this.client, this.settings));
+        assert this.minecraft != null;
+        cir.setReturnValue(new VideoSettingsScreen(this, this.minecraft, this.options));
     }
 }
