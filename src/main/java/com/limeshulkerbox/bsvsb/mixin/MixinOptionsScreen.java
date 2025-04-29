@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-// https://github.com/CaffeineMC/sodium-fabric/blob/dev/src/main/java/net/caffeinemc/mods/sodium/mixin/features/gui/hooks/settings/OptionsScreenMixin.java
+// https://github.com/CaffeineMC/sodium-fabric/blob/dev/common/src/main/java/net/caffeinemc/mods/sodium/mixin/features/gui/hooks/settings/OptionsScreenMixin.java
 @Mixin(value = OptionsScreen.class, priority = -5000)
 public abstract class MixinOptionsScreen extends Screen {
     @Shadow
@@ -24,7 +24,11 @@ public abstract class MixinOptionsScreen extends Screen {
     }
 
     // in createButton no name method ButtonWidget
-    @Inject(method = "method_19828", at = @At("HEAD"), cancellable = true)
+    //@Dynamic
+    @Inject(method = {
+        "method_19828",
+        //"lambda$init$2", //maybe for neoforge
+    }/*, require = 1*/, at = @At("HEAD"), cancellable = true)
     private void disableSodiumSettings(CallbackInfoReturnable<Screen> cir) {
         assert this.minecraft != null;
         cir.setReturnValue(new VideoSettingsScreen(this, this.minecraft, this.options));
